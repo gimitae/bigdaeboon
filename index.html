@@ -1,354 +1,407 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI TTS 음성 변환기</title>
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #e3f2fd, #fce4ec);
-      font-family: Arial, sans-serif;
-      color: #333;
-    }
-
-    .container {
-      width: min(900px, 92%);
-      margin: 40px auto;
-      background: #ffffff;
-      border-radius: 24px;
-      padding: 28px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.16);
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      text-align: center;
-      font-size: 28px;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #777;
-      margin-bottom: 24px;
-      font-size: 14px;
-    }
-
-    .info {
-      padding: 14px;
-      margin-bottom: 20px;
-      border-radius: 14px;
-      background: #e8f5e9;
-      color: #2e7d32;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .option-box {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    select, input {
-      height: 44px;
-      padding: 0 12px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      font-size: 14px;
-      outline: none;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 180px;
-      resize: vertical;
-      padding: 16px;
-      border: 1px solid #ddd;
-      border-radius: 16px;
-      font-size: 16px;
-      line-height: 1.5;
-      outline: none;
-      font-family: Arial, sans-serif;
-    }
-
-    textarea:focus, select:focus, input:focus {
-      border-color: #42a5f5;
-      box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.15);
-    }
-
-    .label {
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-
-    .button-row {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-
-    button, .download-link {
-      border: none;
-      border-radius: 12px;
-      padding: 0 18px;
-      height: 46px;
-      font-size: 15px;
-      cursor: pointer;
-      transition: 0.15s;
-      font-weight: bold;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    button:hover, .download-link:hover {
-      transform: translateY(-2px);
-      opacity: 0.9;
-    }
-
-    button:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-      transform: none;
-    }
-
-    .make-btn {
-      background: #42a5f5;
-      color: white;
-    }
-
-    .clear-btn {
-      background: #b0bec5;
-      color: white;
-    }
-
-    .download-link {
-      background: #7e57c2;
-      color: white;
-    }
-
-    .hidden { display: none; }
-
-    .status {
-      min-height: 24px;
-      margin-top: 14px;
-      color: #555;
-      font-size: 14px;
-    }
-
-    .result-box {
-      margin-top: 20px;
-      padding: 18px;
-      border-radius: 18px;
-      background: #f7f9fb;
-      border: 1px solid #edf1f5;
-    }
-
-    audio {
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    .help {
-      margin-top: 12px;
-      font-size: 13px;
-      color: #777;
-      line-height: 1.6;
-    }
-
-    @media (max-width: 700px) {
-      .option-box { grid-template-columns: 1fr; }
-      .button-row { justify-content: stretch; }
-      button, .download-link { width: 100%; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ AI 맞춤형 상상 동화 제작소 ✨</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; min-height: 100vh;
+            background: linear-gradient(135deg, #e3f2fd, #fce4ec);
+            font-family: Arial, sans-serif; color: #333;
+        }
+        .container {
+            width: min(1000px, 94%); margin: 40px auto;
+            background: #ffffff; border-radius: 24px; padding: 28px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.16);
+        }
+        h1 { text-align: center; font-size: 28px; color: #1e3a8a; margin-bottom: 4px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 28px; font-size: 14px; }
+        
+        /* 인증 박스 스타일 */
+        .auth-box { max-width: 420px; margin: 40px auto; display: flex; flex-direction: column; gap: 12px; }
+        .auth-box h2 { text-align: center; margin-bottom: 8px; font-size: 22px; color: #475569; }
+        
+        input, textarea {
+            height: 46px; padding: 0 14px; border: 1px solid #ddd; border-radius: 12px; font-size: 15px; outline: none; transition: 0.2s;
+        }
+        input:focus, textarea:focus { border-color: #42a5f5; box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.15); }
+        
+        /* 버튼 스타일 */
+        button {
+            border: none; border-radius: 12px; padding: 0 16px; height: 46px; font-size: 15px; cursor: pointer; transition: 0.15s; font-weight: bold;
+        }
+        button:hover { transform: translateY(-2px); opacity: 0.9; }
+        button:disabled { cursor: not-allowed; opacity: 0.6; transform: none; }
+        
+        .primary-btn { background: #42a5f5; color: white; }
+        .secondary-btn { background: #7e57c2; color: white; }
+        .success-btn { background: #66bb6a; color: white; }
+        .danger-btn { background: #ef5350; color: white; }
+        .logout-btn { background: #455a64; color: white; height: 38px; font-size: 14px; }
+        
+        .hidden { display: none; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 14px 20px; border-radius: 16px; background: #f8fafc; border: 1px solid #e2e8f0; }
+        
+        /* 레이아웃 분할 */
+        .app-section { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; }
+        @media (max-width: 850px) { .app-section { grid-template-columns: 1fr; } }
+        
+        .card { background: #f8fafc; border: 1px solid #edf2f7; border-radius: 18px; padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+        .card h3 { margin: 0 0 4px; color: #334155; font-size: 18px; }
+        
+        /* 동화 판넬 */
+        .story-display { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px; min-height: 140px; white-space: pre-wrap; line-height: 1.7; font-size: 16px; color: #334155; }
+        .status { min-height: 20px; font-size: 13px; color: #2563eb; font-weight: 500; }
+        
+        /* 서재 리스트 스타일 */
+        .list { display: flex; flex-direction: column; gap: 14px; max-height: 520px; overflow-y: auto; padding-right: 4px; }
+        .item { background: #ffffff; border: 1px solid #edf1f5; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+        .item-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #1e40af; font-size: 15px; }
+        .item-date { font-size: 11px; color: #94a3b8; font-weight: normal; }
+        .item-text { font-size: 14px; line-height: 1.6; color: #475569; white-space: pre-wrap; }
+        .item-actions { display: flex; gap: 8px; justify-content: flex-end; }
+        .audio-controls { width: 100%; margin-top: 6px; }
+        
+        .notice-box { padding: 12px; border-radius: 12px; background: #fff8e1; color: #b78103; font-size: 13px; line-height: 1.5; text-align: center; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>AI TTS 음성 변환기</h1>
-    <div class="subtitle">텍스트를 AI 음성 mp3 파일로 변환합니다</div>
 
-    <div class="info">
-      현재 구조: GitHub Pages 화면 → Google Apps Script 서버 → OpenAI TTS API → mp3 음성 반환<br />
-      API Key는 index.html에 들어가지 않고 Apps Script의 스크립트 속성에 저장됩니다.
-    </div>
+<div class="container">
+    <h1>✨ AI 맞춤형 상상 동화 제작소 ✨</h1>
+    <div class="subtitle">Firebase와 생성형 AI 기술을 활용한 참신한 개인 창작 서재 학습기</div>
 
-    <div class="option-box">
-      <select id="modelSelect">
-        <option value="tts-1">tts-1 빠른 생성</option>
-        <option value="tts-1-hd">tts-1-hd 고품질</option>
-      </select>
+    <section id="authSection">
+        <div class="auth-box">
+            <h2>로그인 / 회원가입</h2>
+            <input id="emailInput" type="email" placeholder="이메일 주소 (example@email.com)" />
+            <input id="passwordInput" type="password" placeholder="비밀번호 (6자리 이상)" />
+            <button class="primary-btn" id="loginBtn">로그인</button>
+            <button class="secondary-btn" id="signupBtn">새로운 계정 등록 (회원가입)</button>
+            <div class="notice-box">처음 방문하셨다면 사용하실 이메일 정보를 입력한 후<br><b>'새로운 계정 등록'</b> 버튼을 먼저 눌러주세요!</div>
+        </div>
+    </section>
 
-      <select id="voiceSelect">
-        <option value="alloy">alloy</option>
-        <option value="echo">echo</option>
-        <option value="fable">fable</option>
-        <option value="onyx">onyx</option>
-        <option value="nova">nova</option>
-        <option value="shimmer">shimmer</option>
-      </select>
+    <section id="mainSection" class="hidden">
+        <div class="top-bar">
+            <div class="user-info">어린이 작가님 환영합니다! 🌟 계정: <strong id="userEmail"></strong></div>
+            <button class="logout-btn" id="logoutBtn">로그아웃</button>
+        </div>
 
-      <input id="speedInput" type="number" min="0.25" max="4.0" step="0.05" value="1.0" placeholder="속도" />
-    </div>
+        <div class="app-section">
+            <div class="card">
+                <h3>📖 상상 동화 주제 입력</h3>
+                <input id="keywordInput" type="text" placeholder="예: 정직, 용기, 욕심 많은 강아지, 지혜로운 여우" />
+                <button class="primary-btn" id="generateBtn">AI 구연 동화 집필하기</button>
+                
+                <div class="status" id="aiStatus">준비 완료</div>
+                
+                <h3>📚 오늘의 생성 동화</h3>
+                <div class="story-display" id="storyBox">상상하고 싶은 이야기 주제를 입력하고 집필 버튼을 눌러보세요!</div>
+                
+                <div style="display: flex; gap: 12px; margin-top: 6px;">
+                    <button class="secondary-btn" id="ttsBtn" style="flex: 1;" disabled>🔊 구연 동화 듣기</button>
+                    <button class="success-btn" id="saveBtn" style="flex: 1;" disabled>⭐ 내 소리 서재에 저장</button>
+                </div>
+                <audio id="audioPlayer" class="audio-controls hidden" controls></audio>
+            </div>
 
-    <div>
-      <div class="label">변환할 텍스트</div>
-      <textarea id="textInput" placeholder="음성으로 바꿀 문장을 입력하세요. 예: 안녕하세요. 오늘은 Firebase와 OpenAI API를 활용한 웹페이지 제작을 배워보겠습니다."></textarea>
-    </div>
+            <div class="card">
+                <h3>🏰 나의 소리 서재 (실시간 저장소)</h3>
+                <div class="status" id="dbStatus">연결 확인 중...</div>
+                
+                <div id="storyList" class="list">
+                    <div style="text-align:center; color:#94a3b8; padding:40px 0;">서재가 비어 있습니다. 동화를 창작해 채워보세요!</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
 
-    <div class="button-row">
-      <button class="clear-btn" id="clearBtn">초기화</button>
-      <button class="make-btn" id="makeBtn">음성 만들기</button>
-    </div>
+<script type="module">
+    // [요소 2, 3] 참고문서에 기술된 프로젝트의 Firebase 정식 자격 증명 사용 및 모듈 호출
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import { getDatabase, ref, push, set, remove, onValue, off } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
-    <div id="status" class="status"></div>
+    const firebaseConfig = {
+        apiKey: 'AIzaSyDO-v52Ehwphh5gW0WBzu9_DliMhOzy4Yo',
+        authDomain: 'kang-f4e85.firebaseapp.com',
+        databaseURL: 'https://kang-f4e85-default-rtdb.firebaseio.com',
+        projectId: 'kang-f4e85',
+        storageBucket: 'kang-f4e85.firebasestorage.app',
+        messagingSenderId: '107057126084',
+        appId: '1:107057126084:web:30f7bcb3f25dd2aa4a0791',
+        measurementId: 'G-DJ52YTYQZM'
+    };
 
-    <div id="resultBox" class="result-box hidden">
-      <div class="label">생성된 음성</div>
-      <audio id="audioPlayer" controls></audio>
-      <div class="button-row">
-        <a id="downloadLink" class="download-link" href="#" download="tts-audio.mp3">mp3 다운로드</a>
-      </div>
-    </div>
+    // 서비스 초기화
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
 
-    <div class="help">
-      긴 문장은 생성 시간이 오래 걸릴 수 있습니다. 처음에는 짧은 문장으로 테스트해보세요.<br />
-      속도는 0.25부터 4.0까지 조절할 수 있습니다.
-    </div>
-  </div>
-
-  <script>
+    // [요소 4, 5] ChatGPT와 TTS 핸들러 기능을 통합 제공하는 단일 Apps Script 배포 URL 사용
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxzvCeCidpIBm3Ez_AbmzTRrvzCkPa_7x-irAazDPzljPmuqjjHZOqXxfyS1vNh7tX1/exec';
 
-    const textInput = document.getElementById('textInput');
-    const modelSelect = document.getElementById('modelSelect');
-    const voiceSelect = document.getElementById('voiceSelect');
-    const speedInput = document.getElementById('speedInput');
-    const makeBtn = document.getElementById('makeBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const statusBox = document.getElementById('status');
-    const resultBox = document.getElementById('resultBox');
+    // DOM 요소 선택기
+    const authSection = document.getElementById('authSection');
+    const mainSection = document.getElementById('mainSection');
+    const emailInput = document.getElementById('emailInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const loginBtn = document.getElementById('loginBtn');
+    const signupBtn = document.getElementById('signupBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userEmail = document.getElementById('userEmail');
+    
+    const keywordInput = document.getElementById('keywordInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const aiStatus = document.getElementById('aiStatus');
+    const storyBox = document.getElementById('storyBox');
+    const ttsBtn = document.getElementById('ttsBtn');
+    const saveBtn = document.getElementById('saveBtn');
     const audioPlayer = document.getElementById('audioPlayer');
-    const downloadLink = document.getElementById('downloadLink');
+    const dbStatus = document.getElementById('dbStatus');
+    const storyList = document.getElementById('storyList');
 
-    makeBtn.addEventListener('click', makeSpeech);
-    clearBtn.addEventListener('click', clearPage);
+    let currentUser = null;
+    let currentStoriesRef = null;
+    let tempStoryText = '';
+    let tempKeyword = '';
 
-    textInput.addEventListener('keydown', function(event) {
-      if (event.key === 'Enter' && event.ctrlKey) {
-        makeSpeech();
-      }
+    /* ==========================================
+       [요소 3] USER AUTHENTICATION (로그인 시스템)
+       ========================================== */
+    signupBtn.addEventListener('click', async () => {
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+        if(!email || !password) return alert('이메일과 비밀번호를 모두 입력하세요.');
+        try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            alert('어린이 작가 회원 등록이 성공적으로 완료되었습니다!');
+        } catch (e) { alert(getKoreanErrorMessage(e.code)); }
     });
 
-    async function makeSpeech() {
-      const text = textInput.value.trim();
-      const model = modelSelect.value;
-      const voice = voiceSelect.value;
-      const speed = Number(speedInput.value || 1.0);
+    loginBtn.addEventListener('click', async () => {
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+        if(!email || !password) return alert('이메일과 비밀번호를 입력해주세요.');
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+        } catch (e) { alert(getKoreanErrorMessage(e.code)); }
+    });
 
-      if (!text) {
-        alert('음성으로 변환할 텍스트를 입력해주세요.');
-        return;
-      }
+    logoutBtn.addEventListener('click', async () => {
+        try { await signOut(auth); } catch (e) { alert('로그아웃에 실패했습니다.'); }
+    });
 
-      if (speed < 0.25 || speed > 4.0) {
-        alert('속도는 0.25부터 4.0 사이로 입력해주세요.');
-        return;
-      }
-
-      try {
-        setLoading(true);
-        resultBox.classList.add('hidden');
-        statusBox.textContent = 'Apps Script 서버에 TTS 요청을 보내는 중입니다.';
-
-        const response = await fetch(APPS_SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify({
-            type: 'tts',
-            text: text,
-            model: model,
-            voice: voice,
-            speed: speed
-          })
-        });
-
-        const data = await response.json();
-
-        if (data.error) {
-          throw new Error(data.error);
+    // 로그인 상태 감지 인터페이스 뷰 전환
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            authSection.classList.add('hidden');
+            mainSection.classList.remove('hidden');
+            userEmail.textContent = user.email;
+            emailInput.value = ''; passwordInput.value = '';
+            startStoriesSync(user.uid);
+        } else {
+            currentUser = null;
+            authSection.classList.remove('hidden');
+            mainSection.classList.add('hidden');
+            stopStoriesSync();
         }
+    });
 
-        if (!data.audioBase64) {
-          throw new Error('음성 데이터를 받지 못했습니다.');
+    /* ==========================================
+       [요소 4] GENERATIVE AI 연동 (ChatGPT 동화 생성)
+       ========================================== */
+    generateBtn.addEventListener('click', async () => {
+        const keyword = keywordInput.value.trim();
+        if (!keyword) return alert('원하는 동화의 핵심 주제어나 단어를 입력해주세요!');
+        
+        try {
+            generateBtn.disabled = true;
+            generateBtn.textContent = '이야기 짓는 중...';
+            aiStatus.textContent = 'AI 작가가 상상의 나래를 펴며 이야기를 구상하고 있습니다...';
+            storyBox.textContent = '똑똑한 AI가 어린이 작가님의 단어를 바탕으로 동화를 창작하고 있어요... ✍️';
+            ttsBtn.disabled = true;
+            saveBtn.disabled = true;
+
+            // 교육용 시스템 성격에 맞게 시스템 프롬프트 성격의 질문 최적화 구성
+            const tailoredPrompt = `아이들의 정서 발달과 인성 교육에 유익하도록 '${keyword}'를 핵심 주제로 삼은 짧은 창작 동화를 딱 3문장 이내로 지어줘. 어린이에게 책을 읽어주듯 친근한 '~했어요' 체를 사용해줘.`;
+
+            const response = await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ question: tailoredPrompt })
+            });
+            const data = await response.json();
+            
+            if (data.error) throw new Error(data.error);
+
+            tempStoryText = data.answer || '이야기를 가져오지 못했습니다.';
+            tempKeyword = keyword;
+            storyBox.textContent = tempStoryText;
+            aiStatus.textContent = '✨ 상상 동화 완성!';
+            ttsBtn.disabled = false;
+            saveBtn.disabled = false;
+        } catch (err) {
+            console.error(err);
+            storyBox.textContent = '오류 발생: ' + err.message;
+            aiStatus.textContent = '동화 생성 실패';
+        } finally {
+            generateBtn.disabled = false;
+            generateBtn.textContent = 'AI 구연 동화 집필하기';
         }
+    });
 
-        const audioUrl = base64ToAudioUrl(data.audioBase64, 'audio/mpeg');
+    /* ==========================================
+       [요소 5] TEXT-TO-SPEECH (구연 동화 음성 재생)
+       ========================================== */
+    async function playSpeechAudio(textToSpeak) {
+        if (!textToSpeak) return;
+        try {
+            aiStatus.textContent = '목소리 맹연습 중... (AI 음성 변환 중)';
+            const response = await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    type: 'tts',
+                    text: textToSpeak,
+                    model: 'tts-1',
+                    voice: 'nova', // 아동/교육 서비스에 잘 맞는 포근하고 친근한 음성 선택
+                    speed: 0.95   // 듣기 편하도록 속도를 미세하게 조정
+                })
+            });
+            const data = await response.json();
+            if (data.error) throw new Error(data.error);
+            if (!data.audioBase64) throw new Error('음성 바이너리를 읽어오지 못했습니다.');
 
-        audioPlayer.src = audioUrl;
-        downloadLink.href = audioUrl;
-        downloadLink.download = makeFileName();
-        resultBox.classList.remove('hidden');
-        statusBox.textContent = '음성 생성 완료';
-      } catch (error) {
-        console.error(error);
-        statusBox.textContent = '요청 실패';
-        alert('오류가 발생했습니다.\n\n' + error.message);
-      } finally {
-        setLoading(false);
-      }
+            // 참고 양식의 Base64 디코딩 및 오디오 Blob 객체 재생 변환 메커니즘 차용
+            const audioUrl = base64ToAudioUrl(data.audioBase64, 'audio/mpeg');
+            audioPlayer.src = audioUrl;
+            audioPlayer.classList.remove('hidden');
+            audioPlayer.play();
+            aiStatus.textContent = '🎧 구연 동화 구연 중... 귀를 기울여보세요!';
+        } catch (e) {
+            console.error(e);
+            alert('오디오 생성 중 오류 발생: ' + e.message);
+            aiStatus.textContent = '음성 재생 에러';
+        }
     }
+
+    ttsBtn.addEventListener('click', () => playSpeechAudio(tempStoryText));
 
     function base64ToAudioUrl(base64, mimeType) {
-      const byteCharacters = atob(base64);
-      const byteArrays = [];
-
-      for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-        const slice = byteCharacters.slice(offset, offset + 512);
-        const byteNumbers = new Array(slice.length);
-
-        for (let i = 0; i < slice.length; i++) {
-          byteNumbers[i] = slice.charCodeAt(i);
+        const byteCharacters = atob(base64);
+        const byteArrays = [];
+        for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+            const slice = byteCharacters.slice(offset, offset + 512);
+            const byteNumbers = new Array(slice.length);
+            for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+            byteArrays.push(new Uint8Array(byteNumbers));
         }
-
-        const byteArray = new Uint8Array(byteNumbers);
-        byteArrays.push(byteArray);
-      }
-
-      const blob = new Blob(byteArrays, { type: mimeType });
-      return URL.createObjectURL(blob);
+        return URL.createObjectURL(new Blob(byteArrays, { type: mimeType }));
     }
 
-    function makeFileName() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      const hour = String(now.getHours()).padStart(2, '0');
-      const minute = String(now.getMinutes()).padStart(2, '0');
-      return `tts-${year}${month}${day}-${hour}${minute}.mp3`;
+    /* ==========================================
+       [요소 2] FIREBASE REALTIME DATABASE (실시간 CRUD 서재)
+       ========================================== */
+    // 데이터 저장 (Create)
+    saveBtn.addEventListener('click', async () => {
+        if (!currentUser || !tempStoryText) return;
+        try {
+            const userLibraryRef = ref(database, `users/${currentUser.uid}/stories`);
+            const newStoryPush = push(userLibraryRef);
+            await set(newStoryPush, {
+                keyword: tempKeyword,
+                story: tempStoryText,
+                createdAt: new Date().toLocaleString('ko-KR')
+            });
+            alert('🎉 나의 소리 서재에 성공적으로 등록되었습니다!');
+            saveBtn.disabled = true; // 중복 저장 차단
+        } catch (err) { alert('서재 저장 실패: ' + err.message); }
+    });
+
+    // 실시간 리스너 연결 (Read)
+    function startStoriesSync(uid) {
+        stopStoriesSync();
+        dbStatus.textContent = '서재에서 책을 꺼내 정돈하는 중...';
+        currentStoriesRef = ref(database, `users/${uid}/stories`);
+        
+        onValue(currentStoriesRef, (snapshot) => {
+            const data = snapshot.val();
+            renderLibraryItems(data);
+            dbStatus.textContent = '📖 실시간 동화 서재 연동 완료';
+        }, (error) => {
+            console.error(error);
+            dbStatus.textContent = '보안 규칙 에러: 데이터베이스에 접근할 수 없습니다.';
+        });
     }
 
-    function setLoading(isLoading) {
-      makeBtn.disabled = isLoading;
-      makeBtn.textContent = isLoading ? '생성 중...' : '음성 만들기';
+    function stopStoriesSync() {
+        if (currentStoriesRef) {
+            off(currentStoriesRef);
+            currentStoriesRef = null;
+        }
     }
 
-    function clearPage() {
-      textInput.value = '';
-      statusBox.textContent = '';
-      audioPlayer.removeAttribute('src');
-      downloadLink.href = '#';
-      resultBox.classList.add('hidden');
+    // 리스트 화면 렌더링 및 모듈형 이벤트 바인딩
+    function renderLibraryItems(data) {
+        storyList.innerHTML = '';
+        if (!data) {
+            storyList.innerHTML = '<div style="text-align:center; color:#94a3b8; padding:40px 0;">서재가 비어 있습니다. 동화를 창작해 채워보세요!</div>';
+            return;
+        }
+        
+        Object.entries(data).reverse().forEach(([id, item]) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item';
+            itemDiv.innerHTML = `
+                <div class="item-header">
+                    <span>📖 주제: ${escapeHTML(item.keyword)}</span>
+                    <span class="item-date">${item.createdAt}</span>
+                </div>
+                <div class="item-text">${escapeHTML(item.story)}</div>
+                <div class="item-actions">
+                    <button class="secondary-btn" style="height:32px; font-size:13px; padding:0 12px;" id="audio-${id}">🔊 들려줘</button>
+                    <button class="danger-btn" style="height:32px; font-size:13px; padding:0 12px;" id="del-${id}">❌ 삭제</button>
+                </div>
+            `;
+            storyList.appendChild(itemDiv);
+
+            // 스코프 문제 방지를 위한 동적 런타임 리스너 매핑
+            document.getElementById(`audio-${id}`).addEventListener('click', () => playSpeechAudio(item.story));
+            document.getElementById(`del-${id}`).addEventListener('click', () => deleteLibraryItem(id));
+        });
     }
-  </script>
+
+    // 데이터 삭제 (Delete)
+    async function deleteLibraryItem(id) {
+        if (!confirm('이 동화책을 서재에서 영구히 삭제할까요?')) return;
+        try {
+            await remove(ref(database, `users/${currentUser.uid}/stories/${id}`));
+        } catch (e) { alert('삭제 실패: ' + e.message); }
+    }
+
+    // 보안 특수문자 이스케이프 안전 장치
+    function escapeHTML(text) {
+        return String(text).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+    }
+
+    // 에러 핸들링 번역기
+    function getKoreanErrorMessage(code) {
+        switch (code) {
+            case 'auth/email-already-in-use': return '이미 등록된 작가 계정(이메일)입니다.';
+            case 'auth/invalid-email': return '이메일 주소 형식이 유효하지 않습니다.';
+            case 'auth/weak-password': return '보안을 위해 비밀번호를 6자리 이상으로 입력하세요.';
+            case 'auth/user-not-found': return '등록되지 않은 계정입니다. 회원가입을 해주세요.';
+            case 'auth/wrong-password': case 'auth/invalid-credential': return '이메일 또는 패스워드가 올바르지 않습니다.';
+            default: return `연동에 문제가 생겼습니다 (${code})`;
+        }
+    }
+</script>
+
 </body>
 </html>
-
